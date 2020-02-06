@@ -7,4 +7,4 @@ Umgesetzt wurde das Projekt am Anfang komplett mit Vue.Js, aber ich habe schnell
 
 Der Bot, gegen den man Spielt. Schießt zufällig auf das Spielfeld. Sollte er ein Schiff treffen, geht er systematisch vor und zerstört das Schiff komplett.
 
-DEMO: 
+DEMO:  https://maxrittinghaus.github.io/referenzen/Battleship/dist/public
