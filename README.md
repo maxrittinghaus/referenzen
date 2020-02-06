@@ -1,5 +1,5 @@
 # Referenzen
 
-* [Schiffe Versenken [Javascript]](Battleship) [[DEMO](DEMO)]
-* [Hooksystem [Javascript]](Hooksystem)
-* [Steamchat Bot [Javascript]](SteamChatBot)
+* [Schiffe Versenken](Battleship) [[DEMO](https://maxrittinghaus.github.io/referenzen/Battleship/dist/public)]
+* [Hooksystem](Hooksystem)
+* [Steamchat Bot](SteamChatBot)
