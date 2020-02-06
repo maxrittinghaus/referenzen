@@ -1,0 +1,21 @@
+{
+  "parser": "babel-eslint",
+  "extends": ["eslint-config-airbnb-base"],
+  "plugins": ["jest"],
+  "rules": {
+    "import/no-unresolved": 0,
+    "prefer-destructuring": ["error", {
+      "object": true,  
+      "array": false
+    }],
+    "@typescript-eslint/quotes": "off",
+    "quotes": "off",
+    "func-style": "off",
+    "no-plusplus": "off",
+    "class-methods-use-this": "off",
+    "no-underscore-dangle": "off"
+  },
+  "env": {
+    "jest/globals": true
+  }
+}

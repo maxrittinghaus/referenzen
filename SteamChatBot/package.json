@@ -1,0 +1,15 @@
+{
+  "name": "commandbot",
+  "version": "1.0.0",
+  "description": "A Bot that replies to commands",
+  "main": "app.js",
+  "scripts": {
+    "test": "node app.js"
+  },
+  "author": "ArayniMax",
+  "license": "ISC",
+  "dependencies": {
+    "jsonfile": "^4.0.0",
+    "steam-user": "^3.23.2"
+  }
+}

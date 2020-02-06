@@ -1,0 +1,126 @@
+image: 'registry.gitlab.com/hxalabs/misc/ci-docker-image:latest'
+stages:
+  - prepare
+  - test
+  - build
+  - post-build
+  - deploy
+
+# Define Tags Anchor 
+.tags: &tags
+  tags:
+    - hexalabs
+    - node
+
+# Cache node_modules directory between jobs so we don't have to install over and over again
+cache: &global_cache
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+  - node_modules/
+  policy: pull
+
+# Install all dependencies
+Install:
+  <<: *tags
+  stage: prepare
+  script: npm install
+  cache:
+    <<: *global_cache
+    policy: push
+
+# Run ESLint to verify style consistency
+ESLint:
+  <<: *tags
+  stage: test
+  script: npm run lint
+
+# Run unit-/integration-tests
+Jest Simple:
+  <<: *tags
+  stage: test
+  script: npm test
+  # Don't run on main branches (we use another configuration for main branches)
+  except:
+    - master
+    - release/*
+
+# Run unit-/integration-tests with code coverage summarization
+Jest Coverage:
+  <<: *tags
+  stage: test
+  script: npm run testcov
+  only:
+    - master
+    - release/*
+  artifacts:
+    paths:
+      - coverage/
+
+# Run build
+Dist:
+  <<: *tags
+  stage: build
+  script: 
+    - npm run build
+  artifacts:
+    paths:
+      - dist/
+
+# Pack all important files into one tgz file
+Pack:
+  stage: post-build
+  script: npm pack
+  dependencies:
+    - Dist
+  artifacts:
+    expire_in: 1 days
+    paths:
+      - "*.tgz"
+
+# Build documentation
+Generate Docs:
+  <<: *tags
+  stage: post-build
+  script: npm run build:docs
+  only:
+    - master
+    - release/*
+  artifacts:
+    expire_in: 1 days
+    paths:
+      - docs/
+
+# Publish package to our NPM repository
+NPM Registry:
+  <<: *tags
+  stage: deploy
+  script: npm publish
+  only:
+    - master
+    - release/*
+  dependencies:
+    - Dist
+
+# Publish docs, coverage
+Deploy Information:
+  <<: *tags
+  stage: deploy
+  variables:
+    REMOTE_DOCS_PATH: ./$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME/$CI_COMMIT_REF_NAME
+  dependencies:
+    - Generate Docs
+    - Jest Coverage
+  only:
+    - master
+    - release/*
+  script:
+    - ssh jsdocs@docs.hexadoc.xyz "mkdir -p $REMOTE_DOCS_PATH && mkdir -p \"$REMOTE_DOCS_PATH\"_new"
+    - scp -r docs coverage jsdocs@docs.hexadoc.xyz:"$REMOTE_DOCS_PATH"_new/
+    - ssh jsdocs@docs.hexadoc.xyz "mv $REMOTE_DOCS_PATH \"$REMOTE_DOCS_PATH\"_old && mv \"$REMOTE_DOCS_PATH\"_new $REMOTE_DOCS_PATH && rm -r \"$REMOTE_DOCS_PATH\"_old"
+
+
+
+
+
+
+  
